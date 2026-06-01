@@ -1,0 +1,24 @@
+# The binary-only Paganini distribution is PRODUCED locally by scripts/setup.sh
+# and must never be committed (no Paganini source/binaries live in this repo).
+/dist/
+
+# Build artifacts
+*.o
+*.obj
+*.out
+a.out
+build/
+bin/
+*.exe
+
+# Go
+go.sum
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/

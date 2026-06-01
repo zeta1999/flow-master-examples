@@ -1,0 +1,20 @@
+Flow-Master Examples — License
+==============================
+
+The example code in this repository (the `examples/` and `scripts/`
+directories and the Markdown docs) is released into the public domain under
+the terms of CC0 1.0 Universal, so you may copy, adapt, and ship it freely
+as a starting point for your own integration.
+
+    To the extent possible under law, the authors have waived all copyright
+    and related or neighboring rights to these examples.
+    https://creativecommons.org/publicdomain/zero/1.0/
+
+IMPORTANT — this license covers ONLY the example glue code in this repo.
+
+It does NOT cover Paganini itself. Paganini (the `libpaganini` library, the
+`paganini` CLI, the `paganini.h` header, and all of its source) is
+proprietary — "All rights reserved" — and is governed by its own LICENSE in
+the Paganini distribution. These examples merely *consume* Paganini's stable
+binary surface; no Paganini source or binary is included here. Obtain and
+use Paganini under its own terms.
