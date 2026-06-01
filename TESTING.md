@@ -21,6 +21,7 @@ verified. The whole thing is also automated as a single gate:
 | `c++` (clang++/g++) | C++ example | `c++ --version` | same |
 | `python3` | Python example | `python3 --version` | install Python 3 |
 | `go` | Go example | `go version` | install Go ≥ 1.21 |
+| a `gpu-backtest` checkout | Aria example (`bt-engine`) | `ls ../gpu-backtest/Cargo.toml` | set `GPU_BACKTEST_SRC`; else `aria` SKIPs |
 
 Only `cargo` + a Paganini source (or a prebuilt `PAGANINI_DIST`) are
 **required**. Each language example **auto-SKIPs** in `run_all.sh` if its
@@ -85,15 +86,19 @@ example, (c) asserts each prints the expected numbers, and (d) summarises.
   PASS  regime
   PASS  tss
   PASS  impact
+  PASS  strategy
+  PASS  aria
   PASS  cli
 ──────────────────────────────────────────────────────────
-  PASS=8  FAIL=0  SKIP=0
+  PASS=10  FAIL=0  SKIP=0
 
 ALL EXAMPLES PASSED
 ```
 
-Exit code is `0` iff no example FAILED. (On a machine without, say, Go, you'd
-see `SKIP go`, `SKIP impact` and `PASS=6 ... SKIP=2`, still exit `0`.)
+Exit code is `0` iff no example FAILED. Examples whose toolchain or sibling repo
+is absent **SKIP** (not fail): e.g. without Go you'd see `SKIP go`/`SKIP impact`;
+without a `gpu-backtest` checkout you'd see `SKIP aria`. A run with everything
+present is `PASS=10 FAIL=0 SKIP=0`.
 
 ---
 
@@ -212,7 +217,50 @@ Kyle estimated_lambda=0.0499
 A synthetic tape built with `λ=0.05`; RLS recovers `≈0.0499` from the tape
 alone. See [`examples/impact/README.md`](examples/impact/README.md).
 
-### 3.8 CLI — `examples/cli/`
+### 3.8 Market-making strategy skeleton — `examples/strategy/`
+
+```bash
+examples/strategy/run.sh
+```
+
+A C strategy built on the C ABI: per tick it computes a microprice fair value,
+a Welford vol-scaled spread, and an Avellaneda–Stoikov inventory-skewed quote,
+simulates fills and tracks PnL — then runs the bundled `paganini-example-bridge`
+demo (the gpu-backtest plugin registry). Expected (stable) tokens:
+
+```
+MM ticks=200 fills=...
+...
+registry: 3 quants + 2 features pre-loaded
+```
+
+The MM skeleton's PnL is negative by construction — a symmetric maker bleeds to
+directional risk; that's the motivation for the regime/impact algos. See
+[`examples/strategy/README.md`](examples/strategy/README.md).
+
+### 3.9 Aria strategy + Paganini plugin — `examples/aria/`
+
+```bash
+# needs a sibling gpu-backtest checkout (or GPU_BACKTEST_SRC=/path/to/gpu-backtest)
+examples/aria/run.sh
+```
+
+Runs a strategy written in gpu-backtest's **Aria** DSL through `bt-engine`, where
+the Paganini plugin resolves `pag_microprice()` / `pag_bs_price(...)` over the
+binary-only libpaganini C ABI. Builds `bt-engine --features paganini` (slow the
+first time) and backtests on bundled synthetic data. Expected tokens:
+
+```
+Results for SYNTH_BTC:
+    ...
+    Trades:      ...
+```
+
+SKIPs cleanly if `cargo` or a `gpu-backtest` checkout is absent. See
+[`examples/aria/README.md`](examples/aria/README.md) and the Paganini-repo note
+`docs/ARIA_PAGANINI_PLUGIN.md`.
+
+### 3.10 CLI — `examples/cli/`
 
 ```bash
 examples/cli/run.sh

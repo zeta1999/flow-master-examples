@@ -1,0 +1,36 @@
+-- microprice_mm.aria — a market-making / mean-reversion strategy in gpu-backtest's
+-- Aria DSL, powered by the PAGANINI PLUGIN.
+--
+-- `pag_*` functions resolve, at VM dispatch time, through the binary-only
+-- libpaganini C ABI (no Paganini source is compiled into gpu-backtest):
+--   pag_microprice()                       → Paganini's size-weighted microprice,
+--                                            read from the live Bid/Ask/BidVol/AskVol
+--                                            book slots (provably within [bid, ask]).
+--   pag_bs_price(S,K,T,σ,r,q,put)          → paganini-bridge registry quant
+--                                            (paganini::bs_price), by name.
+--
+-- Strategy: the naive mid is "rich" when it sits above Paganini's microprice fair
+-- value and "cheap" when below. Trade deviations beyond a vol-scaled band; flatten
+-- back near fair value.
+
+signal fair = pag_microprice()        -- Paganini microprice (the plugin's feature)
+signal edge = mid - fair              -- >0: mid rich vs fair; <0: mid cheap
+signal vol  = stdev(mid, 20)
+signal band = max(vol, 0.0001)
+
+-- Also exercise the bridge registry quant path: an ATM call fair value at the
+-- current mid with a floored vol (demonstration signal; not used for orders).
+signal v_floor  = max(vol, 0.01)
+signal atm_call = pag_bs_price(mid, mid, 1.0, v_floor, 0.03, 0.0, 0.0)
+
+signal go_long  = edge < -band                       -- mid cheap vs fair → buy
+signal go_short = edge > band                        -- mid rich vs fair → sell
+signal neutral  = edge > -0.25 * band && edge < 0.25 * band
+
+let qty = 1.0
+
+strategy microprice_mm {
+    when go_long  -> buy(qty)
+    when go_short -> sell(qty)
+    when neutral  -> flatten()
+}

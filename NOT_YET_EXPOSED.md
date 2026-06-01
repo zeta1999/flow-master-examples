@@ -10,8 +10,12 @@ C-ABI functions:
 - `paganini_bocpd_changepoints` (BOCPD regime detection) ✅ *new*
 - `paganini_mass_profile` / `paganini_mass_best_match` (MASS) ✅ *new*
 - `paganini_kyle_lambda` (Kyle's λ impact calibration) ✅ *new*
+- `paganini_bridge_new` / `paganini_bridge_run_quant` / `paganini_bridge_free`
+  (the `paganini-bridge` quant registry by name: bs_price / sabr_implied_vol /
+  iv_schadner) ✅ *new — powers `examples/aria/` via gpu-backtest's Paganini plugin*
 
-…plus the `paganini version` CLI command.
+…plus the `paganini version` CLI command, and the bundled
+`paganini-example-bridge` demo binary (run by `examples/strategy/`).
 
 Paganini's source build contains a *much* larger algorithm set. None of it is
 reachable from a binary-only consumer yet, because it has no C-ABI wrapper
@@ -152,13 +156,13 @@ dist packages them (per `docs/DISTRIBUTION.md §8`, which lists
 
 | Binary | Demonstrates |
 |--------|--------------|
+| `paganini-example-bridge` | gpu-backtest plugin registry round-trip — ✅ **bundled in dist & run by `examples/strategy/`** |
 | `paganini-example` | Spot-MM: synthetic ticks → LOB → AS quoter → PnL |
 | `paganini-example-options-mm` | Options-MM end-to-end: SABR → quote chain → caps → hedge |
 | `paganini-example-options-stream` | Streaming options-MM (10-tick ridge + EWMA loop) |
 | `paganini-example-pricing` | Pricing pipeline: BS → IV recovery → SABR refit → arb |
 | `paganini-example-hedging` | Grid hedge search + adaptive refine |
 | `paganini-example-backtest` | Strategy backtest harness (AS / GLFT / regime) |
-| `paganini-example-bridge` | gpu-backtest plugin registry round-trip |
 | `paganini-example-gpu` | Metal + OpenCL GPU dispatch |
 | `paganini-example-in-context` | In-context / TabICL-style inference |
 | `paganini-example-regime-quoter` | Regime-switching quoter |

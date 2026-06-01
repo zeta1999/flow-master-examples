@@ -35,6 +35,11 @@ run_check() {
     echo "── $label ──"
     local out rc; out="$("$@" 2>&1)"; rc=$?
     echo "$out"
+    # An example may opt out at runtime (e.g. a needed sibling repo is absent)
+    # by printing a line starting with "SKIP:" and exiting 0.
+    if [ $rc -eq 0 ] && grep -q "^SKIP:" <<<"$out"; then
+        RESULTS+=("SKIP  $label"); SKIP=$((SKIP+1)); echo; return
+    fi
     if [ $rc -ne 0 ]; then
         RESULTS+=("FAIL  $label (exit $rc)"); FAIL=$((FAIL+1)); echo; return
     fi
@@ -67,6 +72,16 @@ run_check "tss"    cc      "profile_len=5;profile[0]=0.0000;best_index=0;best_di
     examples/tss/build_and_run.sh
 run_check "impact" go      "true_lambda=0.0500;estimated_lambda=0.0499" \
     examples/impact/run.sh
+
+# Strategy skeleton (C, on the C ABI) + the bundled gpu-backtest plugin demo.
+run_check "strategy" cc "MM ticks=200;registry: 3 quants + 2 features pre-loaded" \
+    examples/strategy/run.sh
+
+# Aria DSL strategy run via gpu-backtest's bt-engine + the Paganini plugin.
+# Builds bt-engine --features paganini (slow first time); SKIPs if gpu-backtest
+# or cargo is absent.
+run_check "aria" cargo "Results for SYNTH_BTC:;Trades:" \
+    examples/aria/run.sh
 
 # CLI: separate assertion (it prints a version, not the FFI numbers).
 if [ -x "$PAGANINI_DIST/bin/paganini" ]; then

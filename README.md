@@ -54,13 +54,18 @@ flow-master-examples/
     ├── regime/          ← BOCPD change-point detection (Python/ctypes)
     ├── tss/             ← MASS time-series similarity (C)
     ├── impact/          ← Kyle's λ impact calibration from tape (Go/cgo)
+    ├── strategy/        ← market-making strategy skeleton on the C ABI (C)
+    ├── aria/            ← Aria DSL strategy via gpu-backtest + the Paganini plugin
     └── cli/             ← drive the `paganini` binary
 ```
 
 The `c`/`cpp`/`python`/`go` examples each call the same four core functions
 (AS quote, microprice, variance, ABI probe) — one per language, to show the
 binding pattern. The `regime`/`tss`/`impact` examples each demonstrate one
-additional algorithm exposed through the C ABI.
+additional algorithm exposed through the C ABI. The `strategy` example builds a
+market-making skeleton on those algos; the `aria` example runs a strategy in
+gpu-backtest's Aria DSL where a **Paganini plugin** resolves `pag_*` calls over
+the binary-only C ABI (see `examples/aria/README.md`).
 
 ## Quick start
 

@@ -1,0 +1,33 @@
+# bt-engine config for the Paganini-powered Aria strategy.
+# run.sh resolves the two __PLACEHOLDER__ paths (strategy file + bundled synth
+# DuckDB) to absolute paths before invoking bt-engine.
+
+[general]
+tickers = ["SYNTH_BTC"]
+start_time = "2024-04-19"
+end_time = "2024-05-18"
+mode = "tick"
+
+[data]
+duckdb_path = "__DUCKDB__"
+
+[strategy]
+file = "__ARIA__"
+
+[risk]
+max_position = 5.0
+max_drawdown = 0.50
+
+[execution]
+volume_multiplier = 0.10
+lob_fill_fraction = 0.50
+timing_mode = "full_speed"
+default_quantity = 1.0
+
+[impact]
+model = "linear"
+alpha = 0.05
+beta = 0.3
+
+[output]
+json_summary = true

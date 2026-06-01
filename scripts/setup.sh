@@ -44,8 +44,10 @@ if [ ! -f "$PAGANINI_SRC/Cargo.toml" ]; then
     exit 1
 fi
 
-echo "── Building the binary-only surface (c-api + cli, release) ──"
-( cd "$PAGANINI_SRC" && cargo build --release -p paganini-c-api -p paganini-cli )
+echo "── Building the binary-only surface (c-api + cli + bridge demo, release) ──"
+( cd "$PAGANINI_SRC" && cargo build --release \
+    -p paganini-c-api -p paganini-cli \
+    -p paganini-example --bin paganini-example-bridge )
 
 REL="$PAGANINI_SRC/target/release"
 HDR="$PAGANINI_SRC/crates/paganini-c-api/include/paganini.h"
@@ -58,6 +60,9 @@ cp "$REL/libpaganini.a"   "$DIST/lib/"
 cp "$REL/$DYLIB"          "$DIST/lib/"
 cp "$HDR"                 "$DIST/include/"
 cp "$REL/paganini"        "$DIST/bin/"
+# Bundled demo binary: the gpu-backtest plugin path (DISTRIBUTION.md §8 ships
+# bin/paganini-example). Copied only if it built.
+[ -f "$REL/paganini-example-bridge" ] && cp "$REL/paganini-example-bridge" "$DIST/bin/" || true
 # Read-only docs that ship with the binary distribution (DISTRIBUTION.md §8).
 for d in DISTRIBUTION.md getting_started.md; do
     [ -f "$PAGANINI_SRC/docs/$d" ] && cp "$PAGANINI_SRC/docs/$d" "$DIST/docs/" || true
