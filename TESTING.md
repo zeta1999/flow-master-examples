@@ -88,18 +88,19 @@ example, (c) asserts each prints the expected numbers, and (d) summarises.
   PASS  impact
   PASS  strategy
   PASS  aria
+  PASS  typed-paganini
   PASS  custom-plugin
   PASS  cli
 ──────────────────────────────────────────────────────────
-  PASS=11  FAIL=0  SKIP=0
+  PASS=12  FAIL=0  SKIP=0
 
 ALL EXAMPLES PASSED
 ```
 
 Exit code is `0` iff no example FAILED. Examples whose toolchain or sibling repo
 is absent **SKIP** (not fail): e.g. without Go you'd see `SKIP go`/`SKIP impact`;
-without a `gpu-backtest` checkout you'd see `SKIP aria`/`SKIP custom-plugin`. A run
-with everything present is `PASS=11 FAIL=0 SKIP=0`.
+without a `gpu-backtest` checkout you'd see `SKIP aria`/`SKIP typed-paganini`/`SKIP
+custom-plugin`. A run with everything present is `PASS=12 FAIL=0 SKIP=0`.
 
 ---
 
@@ -261,7 +262,26 @@ SKIPs cleanly if `cargo` or a `gpu-backtest` checkout is absent. See
 [`examples/aria/README.md`](examples/aria/README.md) and the Paganini-repo note
 `docs/ARIA_PAGANINI_PLUGIN.md`.
 
-### 3.10 Custom plugin (typed Rust) — `examples/custom-plugin/`
+### 3.10 Real Paganini via typed plugin — `examples/typed-paganini/`
+
+```bash
+# needs a sibling gpu-backtest checkout
+examples/typed-paganini/run.sh
+```
+
+**Plugin B with real Paganini, binary-only.** Registers Paganini's bridge quants
+in gpu-backtest's `TypedRegistry` via a `CAbiQuant` adapter that dispatches over
+libpaganini. Expected:
+
+```
+typed-plugin paganini::bs_price (100/100/1y/20%) = 8.8273
+typed-plugin paganini::iv_schadner recovers sigma = 0.200000
+```
+
+No Paganini source is compiled into gpu-backtest. See
+[`examples/typed-paganini/README.md`](examples/typed-paganini/README.md).
+
+### 3.11 Custom plugin (typed Rust) — `examples/custom-plugin/`
 
 ```bash
 # needs a sibling gpu-backtest checkout
@@ -277,7 +297,7 @@ examples (`--features paganini-bridge`, stub — no `PAGANINI_DIST`): a custom
 default-vs-custom comparison in
 [`examples/aria/PLUGINS.md`](examples/aria/PLUGINS.md).
 
-### 3.11 CLI — `examples/cli/`
+### 3.12 CLI — `examples/cli/`
 
 ```bash
 examples/cli/run.sh

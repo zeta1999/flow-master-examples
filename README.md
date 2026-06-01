@@ -55,8 +55,9 @@ flow-master-examples/
     ├── tss/             ← MASS time-series similarity (C)
     ├── impact/          ← Kyle's λ impact calibration from tape (Go/cgo)
     ├── strategy/        ← market-making strategy skeleton on the C ABI (C)
-    ├── aria/            ← Aria DSL strategy + the DEFAULT Paganini plugin (binary-only C ABI)
-    ├── custom-plugin/   ← CUSTOM typed-Rust plugin (gpu-backtest bt-bridge)
+    ├── aria/            ← plugin A: Aria DSL → Paganini over the binary-only C ABI
+    ├── typed-paganini/  ← plugin B: real Paganini quants in gpu-backtest's TypedRegistry (binary-only)
+    ├── custom-plugin/   ← plugin B mechanism with your own custom typed plugins
     └── cli/             ← drive the `paganini` binary
 ```
 

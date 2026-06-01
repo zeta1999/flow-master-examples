@@ -83,6 +83,10 @@ run_check "strategy" cc "MM ticks=200;registry: 3 quants + 2 features pre-loaded
 run_check "aria" cargo "Results for SYNTH_BTC:;Trades:" \
     examples/aria/run.sh
 
+# Plugin B with REAL Paganini: typed registry → CAbiQuant → libpaganini C ABI.
+run_check "typed-paganini" cargo "= 8.8273;recovers sigma = 0.200000" \
+    examples/typed-paganini/run.sh
+
 # Custom-plugin path: gpu-backtest's bt-bridge typed-plugin examples (stub;
 # no PAGANINI_DIST). SKIPs if gpu-backtest or cargo is absent.
 run_check "custom-plugin" cargo "OrderFlowImbalance;Total orders emitted: 3" \

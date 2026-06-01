@@ -15,8 +15,21 @@ binary-only, the other is for writing your *own* typed plugins.
 | **Values** | scalar `f64` in/out (DSL register machine) | `Vec<f64>` in/out, stateful, per-plugin snapshot/restore |
 | **Extending it** | add a `paganini_*` C fn + a `pag_*` opcode/name mapping | just `impl` the trait and register it — no ABI change |
 | **Determinism / safety** | `unsafe` FFI; panic-free C ABI; isolated behind `#[cfg(feature="paganini")]` | safe Rust traits; version-asserted against `paganini-core`; ties into journal replay + the Phase-12 PnL **parity test** |
-| **Binary-only / proprietary-friendly** | ✅ yes — ship only the compiled lib + header | ⚠️ compiles against `paganini-core` (uses a stub when Paganini is absent) |
-| **Example here** | [`examples/aria/`](.) (this dir) | [`examples/custom-plugin/`](../custom-plugin/) (runs gpu-backtest's `bt-bridge` typed-plugin examples) |
+| **Binary-only / proprietary-friendly** | ✅ yes — ship only the compiled lib + header | depends: via the C-ABI adapter (below) it's ✅ binary-only; the native-Rust `bt-bridge` route compiles against `paganini-core` (stub when Paganini absent) |
+| **Example here** | [`examples/aria/`](.) (this dir) | [`examples/typed-paganini/`](../typed-paganini/) — **real Paganini** quants in the `TypedRegistry`, binary-only via the C ABI; and [`examples/custom-plugin/`](../custom-plugin/) — the typed mechanism with your own custom plugins |
+
+### Plugin B, two flavours
+
+The typed-registry path can host **either** your own custom plugins **or** real
+Paganini quants:
+
+- **Real Paganini, binary-only** ([`examples/typed-paganini/`](../typed-paganini/)):
+  a `CAbiQuant` adapter implements `bt_plugin::QuantPlugin` by dispatching to
+  `paganini_bridge_run_quant` over **libpaganini** — so Paganini's algorithms
+  stay in the Paganini repo and gpu-backtest links only the compiled library.
+- **Custom plugins** ([`examples/custom-plugin/`](../custom-plugin/)): you
+  `impl` the trait yourself (a toy `LinearQuant`/`OrderFlowImbalance`), no
+  Paganini involved.
 
 ## Rules of thumb
 
