@@ -7,6 +7,12 @@ This is the one example that doesn't link libpaganini itself: instead it runs a
 real **strategy** in gpu-backtest's `bt-engine`, and gpu-backtest's Paganini
 plugin resolves the strategy's `pag_*` calls over the libpaganini C ABI.
 
+> **This is the DEFAULT-plugin path** — Paganini's shipped algorithms, consumed
+> binary-only. For the **CUSTOM-plugin** path (write your own typed Rust
+> `QuantPlugin`/`FeaturePlugin`/`StrategyPlugin`) see
+> [`../custom-plugin/`](../custom-plugin/), and [`PLUGINS.md`](PLUGINS.md) for a
+> side-by-side feature comparison of the two.
+
 ## Run
 
 ```bash

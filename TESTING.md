@@ -88,17 +88,18 @@ example, (c) asserts each prints the expected numbers, and (d) summarises.
   PASS  impact
   PASS  strategy
   PASS  aria
+  PASS  custom-plugin
   PASS  cli
 ──────────────────────────────────────────────────────────
-  PASS=10  FAIL=0  SKIP=0
+  PASS=11  FAIL=0  SKIP=0
 
 ALL EXAMPLES PASSED
 ```
 
 Exit code is `0` iff no example FAILED. Examples whose toolchain or sibling repo
 is absent **SKIP** (not fail): e.g. without Go you'd see `SKIP go`/`SKIP impact`;
-without a `gpu-backtest` checkout you'd see `SKIP aria`. A run with everything
-present is `PASS=10 FAIL=0 SKIP=0`.
+without a `gpu-backtest` checkout you'd see `SKIP aria`/`SKIP custom-plugin`. A run
+with everything present is `PASS=11 FAIL=0 SKIP=0`.
 
 ---
 
@@ -260,7 +261,23 @@ SKIPs cleanly if `cargo` or a `gpu-backtest` checkout is absent. See
 [`examples/aria/README.md`](examples/aria/README.md) and the Paganini-repo note
 `docs/ARIA_PAGANINI_PLUGIN.md`.
 
-### 3.10 CLI — `examples/cli/`
+### 3.10 Custom plugin (typed Rust) — `examples/custom-plugin/`
+
+```bash
+# needs a sibling gpu-backtest checkout
+examples/custom-plugin/run.sh
+```
+
+The **custom-plugin** counterpart to `aria` (which uses Paganini's *default*
+algorithms binary-only). Runs gpu-backtest's three `bt-bridge` typed-plugin
+examples (`--features paganini-bridge`, stub — no `PAGANINI_DIST`): a custom
+`QuantPlugin`, `FeaturePlugin`, and `StrategyPlugin`. Expected tokens include
+`OrderFlowImbalance` and `Total orders emitted: 3`. See
+[`examples/custom-plugin/README.md`](examples/custom-plugin/README.md) and the
+default-vs-custom comparison in
+[`examples/aria/PLUGINS.md`](examples/aria/PLUGINS.md).
+
+### 3.11 CLI — `examples/cli/`
 
 ```bash
 examples/cli/run.sh
