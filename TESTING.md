@@ -87,9 +87,9 @@ example, (c) asserts each prints the expected numbers, and (d) summarises.
   PASS  tss
   PASS  impact
   PASS  strategy
-  PASS  aria
-  PASS  typed-paganini
-  PASS  custom-plugin
+  PASS  plugin-aria-dsl
+  PASS  plugin-typed-real
+  PASS  plugin-typed-custom
   PASS  cli
 ──────────────────────────────────────────────────────────
   PASS=12  FAIL=0  SKIP=0
@@ -99,8 +99,9 @@ ALL EXAMPLES PASSED
 
 Exit code is `0` iff no example FAILED. Examples whose toolchain or sibling repo
 is absent **SKIP** (not fail): e.g. without Go you'd see `SKIP go`/`SKIP impact`;
-without a `gpu-backtest` checkout you'd see `SKIP aria`/`SKIP typed-paganini`/`SKIP
-custom-plugin`. A run with everything present is `PASS=12 FAIL=0 SKIP=0`.
+without a `gpu-backtest` checkout you'd see `SKIP plugin-aria-dsl` /
+`SKIP plugin-typed-real` / `SKIP plugin-typed-custom`. A run with everything
+present is `PASS=12 FAIL=0 SKIP=0`.
 
 ---
 
@@ -228,10 +229,14 @@ examples/strategy/run.sh
 A C strategy built on the C ABI: per tick it computes a microprice fair value,
 a Welford vol-scaled spread, and an Avellaneda–Stoikov inventory-skewed quote,
 simulates fills and tracks PnL — then runs the bundled `paganini-example-bridge`
-demo (the gpu-backtest plugin registry). Expected (stable) tokens:
+demo (the gpu-backtest plugin registry). The `fills`/`cash`/`MtM_PnL`/`sigma`
+numbers depend on the platform libm, so only the shape + stable markers are
+asserted:
 
 ```
-MM ticks=200 fills=...
+MM ticks=200 fills=<N>
+MM final_inventory=<I> cash=<…>
+MM MtM_PnL=<…> final_sigma=<…>
 ...
 registry: 3 quants + 2 features pre-loaded
 ```
@@ -240,11 +245,16 @@ The MM skeleton's PnL is negative by construction — a symmetric maker bleeds t
 directional risk; that's the motivation for the regime/impact algos. See
 [`examples/strategy/README.md`](examples/strategy/README.md).
 
-### 3.9 Aria strategy + Paganini plugin — `examples/aria/`
+> The three `plugin-*` examples below show how gpu-backtest calls Paganini
+> through its plugin system. Read [`examples/PLUGINS.md`](examples/PLUGINS.md)
+> first — it says which to pick. Each one's `run.sh` prints the exact
+> gpu-backtest source file it executes.
+
+### 3.9 Plugin: Aria DSL → Paganini — `examples/plugin-aria-dsl/`
 
 ```bash
 # needs a sibling gpu-backtest checkout (or GPU_BACKTEST_SRC=/path/to/gpu-backtest)
-examples/aria/run.sh
+examples/plugin-aria-dsl/run.sh
 ```
 
 Runs a strategy written in gpu-backtest's **Aria** DSL through `bt-engine`, where
@@ -259,43 +269,41 @@ Results for SYNTH_BTC:
 ```
 
 SKIPs cleanly if `cargo` or a `gpu-backtest` checkout is absent. See
-[`examples/aria/README.md`](examples/aria/README.md) and the Paganini-repo note
-`docs/ARIA_PAGANINI_PLUGIN.md`.
+[`examples/plugin-aria-dsl/README.md`](examples/plugin-aria-dsl/README.md).
 
-### 3.10 Real Paganini via typed plugin — `examples/typed-paganini/`
+### 3.10 Plugin: real Paganini as a typed plugin — `examples/plugin-typed-real/`
 
 ```bash
 # needs a sibling gpu-backtest checkout
-examples/typed-paganini/run.sh
+examples/plugin-typed-real/run.sh
 ```
 
-**Plugin B with real Paganini, binary-only.** Registers Paganini's bridge quants
-in gpu-backtest's `TypedRegistry` via a `CAbiQuant` adapter that dispatches over
-libpaganini. Expected:
+Registers Paganini's bridge quants in gpu-backtest's `TypedRegistry` via a
+`CAbiQuant` adapter that dispatches over libpaganini. Full expected output
+(every line asserted by `run_all.sh`):
 
 ```
+typed registry: 2 Paganini quants registered
 typed-plugin paganini::bs_price (100/100/1y/20%) = 8.8273
 typed-plugin paganini::iv_schadner recovers sigma = 0.200000
+shape guard fired (expected): shape mismatch: paganini::bs_price: expected input_dim=7, got 3
 ```
 
 No Paganini source is compiled into gpu-backtest. See
-[`examples/typed-paganini/README.md`](examples/typed-paganini/README.md).
+[`examples/plugin-typed-real/README.md`](examples/plugin-typed-real/README.md).
 
-### 3.11 Custom plugin (typed Rust) — `examples/custom-plugin/`
+### 3.11 Plugin: your own custom typed plugin — `examples/plugin-typed-custom/`
 
 ```bash
 # needs a sibling gpu-backtest checkout
-examples/custom-plugin/run.sh
+examples/plugin-typed-custom/run.sh
 ```
 
-The **custom-plugin** counterpart to `aria` (which uses Paganini's *default*
-algorithms binary-only). Runs gpu-backtest's three `bt-bridge` typed-plugin
-examples (`--features paganini-bridge`, stub — no `PAGANINI_DIST`): a custom
-`QuantPlugin`, `FeaturePlugin`, and `StrategyPlugin`. Expected tokens include
-`OrderFlowImbalance` and `Total orders emitted: 3`. See
-[`examples/custom-plugin/README.md`](examples/custom-plugin/README.md) and the
-default-vs-custom comparison in
-[`examples/aria/PLUGINS.md`](examples/aria/PLUGINS.md).
+The same typed mechanism as 3.10 but with custom (non-Paganini) plugins, built
+with `--features paganini-bridge` (stub — no `PAGANINI_DIST`). Asserted markers:
+`linear_quant_demo`, `OrderFlowImbalance`, `Total orders emitted: 3`. See
+[`examples/plugin-typed-custom/README.md`](examples/plugin-typed-custom/README.md)
+and the comparison in [`examples/PLUGINS.md`](examples/PLUGINS.md).
 
 ### 3.12 CLI — `examples/cli/`
 

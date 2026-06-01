@@ -27,8 +27,8 @@ whole series and returns, per step, the **recent-change mass** — the
 posterior probability that a change point occurred within the last `window`
 steps.
 
-- Under the stationary regime that mass hovers near the hazard rate
-  `1/λ` (here `≈0.04` at index 20).
+- Under the stationary regime that mass stays small — a few times the
+  per-step hazard `1/λ = 0.02` (here `≈0.0398` at index 20).
 - At the shift (index 24) it **spikes to ≈1.0** — the detector is almost
   certain a new regime began.
 
@@ -49,5 +49,5 @@ Normal-Inverse-Gamma variance prior (here `5`, `1e-3` — a tight prior so a
 single outlier is identifiable), `window` = how many recent run lengths count
 as "post-change" (`0` → 10). Returns `-1` on a null pointer, `n == 0`, or a
 non-finite observation. The reference is the
-[`docs/BIBLIOGRAPHY.md`](../../../Paganini/docs/BIBLIOGRAPHY.md) entry for
+`Paganini/docs/BIBLIOGRAPHY.md` (in the Paganini source checkout) entry for
 BOCPD in the Paganini repo.

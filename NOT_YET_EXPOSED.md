@@ -12,7 +12,7 @@ C-ABI functions:
 - `paganini_kyle_lambda` (Kyle's λ impact calibration) ✅ *new*
 - `paganini_bridge_new` / `paganini_bridge_run_quant` / `paganini_bridge_free`
   (the `paganini-bridge` quant registry by name: bs_price / sabr_implied_vol /
-  iv_schadner) ✅ *new — powers `examples/aria/` via gpu-backtest's Paganini plugin*
+  iv_schadner) ✅ *new — powers the `examples/plugin-*` gpu-backtest plugin demos*
 
 …plus the `paganini version` CLI command, and the bundled
 `paganini-example-bridge` demo binary (run by `examples/strategy/`).

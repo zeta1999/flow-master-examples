@@ -11,13 +11,15 @@ source ../../scripts/env.sh   # or: export PAGANINI_DIST=/path/to/dist
 ./run.sh
 ```
 
-Expected output (numbers are deterministic on a given libm):
+Expected output (shape only — the exact `fills`/`cash`/`MtM_PnL`/`sigma` values
+depend on the platform's libm, so they aren't quoted or asserted; `run_all.sh`
+gates `MM ticks=200` and the registry line):
 
 ```
 ── market-making strategy (built on the Paganini C ABI) ──
-MM ticks=200 fills=44
-MM final_inventory=-4 cash=376.4362
-MM MtM_PnL=-30.8673 final_sigma=0.0288
+MM ticks=200 fills=<N>
+MM final_inventory=<I> cash=<…>
+MM MtM_PnL=<…> final_sigma=<…>     # PnL is negative by construction (see below)
 
 ── same algos via the gpu-backtest plugin registry (bundled demo) ──
 === paganini-bridge end-to-end demo ===
@@ -42,8 +44,8 @@ central market-making lesson — and the motivation for the regime/impact algos
 (`examples/regime/`, `examples/impact/`) you'd layer on next.
 
 Then it runs `paganini-example-bridge`: the exact `PluginRegistry::with_paganini_defaults()`
-a gpu-backtest VM pre-loads — the same registry the `examples/aria/` strategy
-reaches by name over the C ABI.
+a gpu-backtest VM pre-loads — the same registry the plugin examples reach by name
+over the C ABI.
 
 See [`../c/README.md`](../c/README.md) for the algorithm references, and
-[`../aria/README.md`](../aria/README.md) for the Aria/plugin counterpart.
+[`../PLUGINS.md`](../PLUGINS.md) for the gpu-backtest plugin examples.

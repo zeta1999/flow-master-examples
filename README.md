@@ -16,8 +16,9 @@ flow — **from a binary-only build**, in several languages.
 Paganini's source-free consumption seam today is its stable **C ABI**
 (`crates/paganini-c-api`, shipped as `libpaganini.{a,dylib,so}` +
 `paganini.h`) plus the `paganini` CLI binary. The C ABI currently exports
-four functions, each wrapping an algorithm whose correctness is
-machine-checked in Paganini's Lean specs:
+seven algorithm functions (below) plus the `paganini_bridge_*` registry trio,
+each wrapping an algorithm whose correctness is machine-checked in Paganini's
+Lean specs:
 
 | C function | Algorithm | What it does |
 |------------|-----------|--------------|
@@ -55,19 +56,20 @@ flow-master-examples/
     ├── tss/             ← MASS time-series similarity (C)
     ├── impact/          ← Kyle's λ impact calibration from tape (Go/cgo)
     ├── strategy/        ← market-making strategy skeleton on the C ABI (C)
-    ├── aria/            ← plugin A: Aria DSL → Paganini over the binary-only C ABI
-    ├── typed-paganini/  ← plugin B: real Paganini quants in gpu-backtest's TypedRegistry (binary-only)
-    ├── custom-plugin/   ← plugin B mechanism with your own custom typed plugins
+    ├── PLUGINS.md       ← read this before the three plugin examples below
+    ├── plugin-aria-dsl/    ← plugin: call Paganini from gpu-backtest's Aria DSL
+    ├── plugin-typed-real/  ← plugin: real Paganini as a typed Rust QuantPlugin
+    ├── plugin-typed-custom/← plugin: the typed mechanism with your own model
     └── cli/             ← drive the `paganini` binary
 ```
 
 The `c`/`cpp`/`python`/`go` examples each call the same four core functions
 (AS quote, microprice, variance, ABI probe) — one per language, to show the
-binding pattern. The `regime`/`tss`/`impact` examples each demonstrate one
-additional algorithm exposed through the C ABI. The `strategy` example builds a
-market-making skeleton on those algos; the `aria` example runs a strategy in
-gpu-backtest's Aria DSL where a **Paganini plugin** resolves `pag_*` calls over
-the binary-only C ABI (see `examples/aria/README.md`).
+binding pattern. The `regime`/`tss`/`impact` examples each demonstrate one more
+algorithm exposed through the C ABI. The `strategy` example builds a
+market-making skeleton on those algos (not a plugin). The three `plugin-*`
+examples show how gpu-backtest calls Paganini through its plugin system —
+see [`examples/PLUGINS.md`](examples/PLUGINS.md) for which to pick.
 
 ## Quick start
 
@@ -95,6 +97,7 @@ paganini ABI version: 1
 AS quote bid=99.3526 ask=100.6474 spread=1.2948
 microprice=99.5000
 variance=2.5000
+variance(n<2)=NaN (guard OK)
 ```
 
 See [`TESTING.md`](TESTING.md) for the full, validated walkthrough including

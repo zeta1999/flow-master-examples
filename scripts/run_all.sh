@@ -77,20 +77,22 @@ run_check "impact" go      "true_lambda=0.0500;estimated_lambda=0.0499" \
 run_check "strategy" cc "MM ticks=200;registry: 3 quants + 2 features pre-loaded" \
     examples/strategy/run.sh
 
-# Aria DSL strategy run via gpu-backtest's bt-engine + the Paganini plugin.
-# Builds bt-engine --features paganini (slow first time); SKIPs if gpu-backtest
-# or cargo is absent.
-run_check "aria" cargo "Results for SYNTH_BTC:;Trades:" \
-    examples/aria/run.sh
+# Plugin examples (see examples/PLUGINS.md). All SKIP if gpu-backtest/cargo
+# is absent. Assertions gate the FULL expected output so docs can't drift.
 
-# Plugin B with REAL Paganini: typed registry → CAbiQuant → libpaganini C ABI.
-run_check "typed-paganini" cargo "= 8.8273;recovers sigma = 0.200000" \
-    examples/typed-paganini/run.sh
+# Plugin A — Aria DSL → Paganini over the C ABI (builds bt-engine, slow first run).
+run_check "plugin-aria-dsl" cargo "Results for SYNTH_BTC:;Trades:" \
+    examples/plugin-aria-dsl/run.sh
 
-# Custom-plugin path: gpu-backtest's bt-bridge typed-plugin examples (stub;
-# no PAGANINI_DIST). SKIPs if gpu-backtest or cargo is absent.
-run_check "custom-plugin" cargo "OrderFlowImbalance;Total orders emitted: 3" \
-    examples/custom-plugin/run.sh
+# Plugin B — real Paganini in the typed registry → CAbiQuant → libpaganini C ABI.
+run_check "plugin-typed-real" cargo \
+    "2 Paganini quants registered;= 8.8273;recovers sigma = 0.200000;shape guard fired" \
+    examples/plugin-typed-real/run.sh
+
+# Plugin B (mechanism) — your own custom typed plugins (stub; no PAGANINI_DIST).
+run_check "plugin-typed-custom" cargo \
+    "linear_quant_demo;OrderFlowImbalance;Total orders emitted: 3" \
+    examples/plugin-typed-custom/run.sh
 
 # CLI: separate assertion (it prints a version, not the FFI numbers).
 if [ -x "$PAGANINI_DIST/bin/paganini" ]; then

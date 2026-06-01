@@ -39,7 +39,7 @@ double paganini_kyle_lambda(const double *signed_volumes, const double *mids,
 `mids[i]` is the mid **after** trade `i`. `lambda_ff` is the RLS forgetting
 factor (~0.99), `p0` the initial inverse covariance (~1.0). Returns `NaN` on a
 null pointer or `n < 2`. References (Kyle 1985; RLS — Haykin):
-[`docs/BIBLIOGRAPHY.md`](../../../Paganini/docs/BIBLIOGRAPHY.md) in the
+`Paganini/docs/BIBLIOGRAPHY.md` (in the Paganini source checkout) in the
 Paganini repo.
 
 See [`../go/README.md`](../go/README.md) for cgo specifics (`CGO_ENABLED`,

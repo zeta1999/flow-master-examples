@@ -42,5 +42,5 @@ int32_t paganini_mass_best_match(const double *series, size_t n,
 
 `out` must hold `n - m + 1` doubles. Both return `-1` on a null pointer,
 `m == 0`, `m > n`, or a numeric failure. Reference:
-[`docs/BIBLIOGRAPHY.md`](../../../Paganini/docs/BIBLIOGRAPHY.md) (MASS / matrix
+`Paganini/docs/BIBLIOGRAPHY.md` (in the Paganini source checkout) (MASS / matrix
 profile) in the Paganini repo.

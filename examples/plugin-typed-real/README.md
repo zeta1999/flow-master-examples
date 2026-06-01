@@ -1,14 +1,14 @@
-# Real Paganini via the typed plugin (plugin B, binary-only)
+# Plugin B — real Paganini as a typed plugin
 
-Registers **real Paganini** quants (`paganini::bs_price`,
-`paganini::iv_schadner`) into gpu-backtest's `TypedRegistry` — the **typed
-plugin** path (plugin B) — but reaches them over the **binary-only libpaganini
-C ABI**. No Paganini source is compiled into gpu-backtest; only the compiled
-library is linked.
+**One of three plugin examples — start at [`../PLUGINS.md`](../PLUGINS.md).**
 
-This is the typed-plugin counterpart to [`../aria/`](../aria/) (plugin A, which
-calls Paganini from the Aria DSL). Both consume *real* Paganini binary-only.
-See [`../aria/PLUGINS.md`](../aria/PLUGINS.md) for the full comparison.
+Registers **real Paganini** quants (`paganini::bs_price`, `paganini::iv_schadner`)
+into gpu-backtest's `TypedRegistry` as a `bt_plugin::QuantPlugin`, reaching them
+over the **binary-only libpaganini C ABI**. No Paganini source is compiled into
+gpu-backtest; only the compiled library is linked.
+
+Same Paganini quants as [`../plugin-aria-dsl/`](../plugin-aria-dsl/) — that one
+calls them from the Aria DSL, this one from a typed Rust plugin.
 
 ## Run
 
@@ -18,7 +18,7 @@ source ../../scripts/env.sh          # or: export PAGANINI_DIST=/path/to/dist
 ./run.sh
 ```
 
-Expected:
+Expected output (exact — this whole block is asserted by `scripts/run_all.sh`):
 
 ```
 typed registry: 2 Paganini quants registered
@@ -26,6 +26,16 @@ typed-plugin paganini::bs_price (100/100/1y/20%) = 8.8273
 typed-plugin paganini::iv_schadner recovers sigma = 0.200000
 shape guard fired (expected): shape mismatch: paganini::bs_price: expected input_dim=7, got 3
 ```
+
+## What actually runs (and where)
+
+This example has **no local logic** — `run.sh` builds and runs code that lives in
+the sibling gpu-backtest repo (it prints these paths when you run it):
+
+- example main: `gpu-backtest/crates/bt-bridge/examples/paganini_cabi_quant.rs`
+- the adapter: `gpu-backtest/crates/bt-bridge/src/cabi.rs` (`CAbiQuant`)
+
+Run `SHOW_SOURCE=1 ./run.sh` to print both files inline before execution.
 
 ## How it works
 
