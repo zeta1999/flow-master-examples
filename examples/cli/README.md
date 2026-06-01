@@ -11,11 +11,11 @@ source ../../scripts/env.sh   # or: export PAGANINI_DIST=/path/to/dist
 ./run.sh
 ```
 
-Expected output:
+Expected output (the version tracks the installed library, e.g. `0.1.0`):
 
 ```
 ── paganini version ──
-paganini 0.1.0
+paganini <version>
 ```
 
 ## Status

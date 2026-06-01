@@ -311,11 +311,12 @@ and the comparison in [`examples/PLUGINS.md`](examples/PLUGINS.md).
 examples/cli/run.sh
 ```
 
-**Expected:**
+**Expected** (version tracks the installed library; the gate matches any
+`paganini <version>`):
 
 ```
 ── paganini version ──
-paganini 0.1.0
+paganini <version>
 ```
 
 ---
