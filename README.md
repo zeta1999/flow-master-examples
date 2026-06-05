@@ -1,15 +1,32 @@
-# Flow-Master Examples
+<div align="center">
 
-Worked, runnable examples for consuming **[Paganini](https://github.com/local/Paganini)**
-— a Rust quantlib for algo trading, market making, HFT, and options dealer
-flow — **from a binary-only build**, in several languages.
+# 🌊 Flow-Master Examples
 
-> **The contract of this repo:** it contains *no Paganini source and no
-> Paganini binaries*. Every example links against the compiled, stable C ABI
-> (`libpaganini`) or drives the `paganini` CLI. You bring a binary build of
-> Paganini; these examples show how to call it. That keeps Paganini
-> proprietary while making it trivially consumable from C, C++, Python, Go,
-> and the shell.
+**Drive the _Paganini_ algo-trading quantlib — market making, HFT, and options-dealer flow —
+from a binary-only build, in C · C++ · Python · Go · Shell · Aria-DSL.**
+
+`BINARY-ONLY` · `NO SOURCE SHIPPED` · `STABLE C-ABI + CLI` · `LEAN-VERIFIED ALGOS`
+
+</div>
+
+> **The contract of this repo:** it contains *no Paganini source and no Paganini binaries*. Every
+> example links the compiled, stable C ABI (`libpaganini`) or drives the `paganini` CLI — you bring a
+> binary build, these show how to call it. That keeps **Paganini** proprietary while making it
+> trivially consumable from C, C++, Python, Go, and the shell.
+
+```text
+   ┌──────────────┐   build separately   ┌──────────────────────────────┐
+   │   Paganini   │ ───────────────────▶ │  libpaganini.{so,dylib,a}     │
+   │ (proprietary)│                      │      +  paganini  CLI         │
+   └──────────────┘                      └───────────────┬──────────────┘
+                                              C ABI / CLI │  (no source needed)
+            ┌──────────┬──────────┬──────────┬────────────┼──────────┬──────────┐
+            ▼          ▼          ▼          ▼             ▼          ▼          ▼
+           C         C++       Python       Go          Shell     Aria-DSL   strategy
+        (link)    (wrapper)   (ctypes)    (cgo)         (CLI)     (plugin)  (skeleton)
+            └──────────┴──────────┴──────────┴────────────┴──────────┴──────────┘
+                       numeric outputs, asserted against recorded goldens
+```
 
 ## What the binary build exposes
 
